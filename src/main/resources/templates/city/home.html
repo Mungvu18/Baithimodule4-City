@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/layout :: head" >
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<header th:replace="/layout :: header"></header>
+<div class="container">
+
+    <hr>
+    <div class="row">
+
+        <div class="col" >
+            <th:block th:if="${message}">
+                <p th:text="${message}"></p>
+            </th:block>
+
+        </div>
+        <div class="col">
+            <form style="text-align: right">
+                <a th:href="@{/city/create}">Create new city</a>
+            </form>
+        </div>
+
+    </div>
+    <hr>
+    <div class="row">
+
+        <table border="1" class="table table-dark table-striped" style="text-align: center;" id="classList">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Country</th>
+                <th>Edit | Delete</th>
+
+            </tr>
+            <th:block th:each="city,id : ${list}">
+                <tr>
+                    <td th:text="${id.index}+1" id="id"></td>
+                    <td id="nameCity"><a th:href="@{/city/info/__${city.id}__}"><span th:text="${city.getName()}"></span></a></td>
+                    <td th:text="${city.getCountry().getName()}" id="nameCountry"></td>
+
+
+                    <td>
+                        <a class="btn btn-warning" th:href="@{/city/edit/__${city.id}__ }">Edit</a> |
+                        <a class="btn btn-danger delete" onclick="return confirm('Bạn có chắc chắn xóa bản ghi')" th:href="${city.id}">Delete</a>
+                    </td>
+                </tr>
+            </th:block>
+        </table>
+    </div>
+
+</div>
+
+
+<footer th:replace="/layout :: footer"></footer>
+</body>
+<script>
+    $(document).ready(function () {
+        //sư kiện nào thực hiện Ajax
+        $('.delete').click(function(event){
+            //lay du lieu
+            let a = $(this);
+            let id = a.attr("href");
+            // goi ajax
+            $.ajax({
+                type:"DELETE",
+                //tên API
+                url:"/city/delete/"+ id,
+                //xử lý khi thành công
+                success: function (data) {
+                    a.parent().parent().remove();
+                }
+            });
+            //chặn sự kiện mặc định của thẻ
+            event.preventDefault();
+        });
+    })
+</script>
+</html>
